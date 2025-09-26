@@ -1,0 +1,11 @@
+file_format: "1"
+
+name: Corne
+
+type: shield
+
+requires:
+  - seeeduino_xiao_ble
+
+features:
+  - keys
