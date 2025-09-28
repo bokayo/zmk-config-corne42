@@ -39,7 +39,7 @@
 
             bindings = <
 &none           &none           &kp W           &kp E               &kp R                       &kp T          &kp Y          &kp U                        &kp I                &kp O            &none                    &none
-&kp Q           &mt LEFT_GUI A  &mt LEFT_ALT S  &mt LEFT_CONTROL D  &mt LEFT_SHIFT F            &kp G          &kp H          &mt RIGHT_SHIFT J            &mt RIGHT_CONTROL K  &mt RIGHT_ALT K  &mt RIGHT_GUI SEMICOLON  &kp P
+&kp Q           &mt LEFT_GUI A  &mt LEFT_ALT S  &mt LEFT_CONTROL D  &mt LEFT_SHIFT F            &kp G          &kp H          &mt RIGHT_SHIFT J            &mt RIGHT_CONTROL K  &mt RIGHT_ALT L  &mt RIGHT_GUI SEMICOLON  &kp P
 &bt BT_CLR_ALL  &kp Z           &kp X           &kp C               &mt LS(LA(LC(LEFT_GUI))) V  &kp B          &kp N          &mt RS(RA(RC(RIGHT_GUI))) M  &kp COMMA            &kp DOT          &kp FSLH                 &none
                                                 &lt MISC DELETE     &lt NAV ESCAPE              &lt MOU TAB    &lt SYM ENTER  &lt NUM SPACE                &lt FUNC BACKSPACE
             >;
