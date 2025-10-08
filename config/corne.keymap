@@ -25,58 +25,6 @@
 };
 
 / {
-    combos {
-        compatible = "zmk,combos";
-
-        cmb_undo {
-            bindings = <&kp K_UNDO>;
-            key-positions = <25 26>;
-            layers = <7>;
-        };
-
-        cmb_redo {
-            bindings = <&kp K_REDO>;
-            key-positions = <26 27>;
-            layers = <7>;
-        };
-
-        cmb_copy {
-            bindings = <&kp K_COPY>;
-            key-positions = <27 28>;
-            layers = <7>;
-        };
-
-        cmb_paste {
-            bindings = <&kp K_PASTE>;
-            key-positions = <28 29>;
-            layers = <7>;
-        };
-
-        cmb_save {
-            bindings = <&kp C_AC_SAVE>;
-            key-positions = <13 14>;
-            layers = <7>;
-        };
-
-        cmb_f6 {
-            bindings = <&kp F6>;
-            key-positions = <3 2>;
-            layers = <7>;
-        };
-
-        cmb_tgl_num_pad {
-            bindings = <&tog 8>;
-            key-positions = <38 36>;
-            layers = <7 8>;
-        };
-
-        cmb_tgl_fusion {
-            bindings = <&tog 7>;
-            key-positions = <38 24>;
-            layers = <7 0>;
-        };
-    };
-
     keymap {
         compatible = "zmk,keymap";
 
@@ -90,10 +38,10 @@
             //                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
 
             bindings = <
-&none  &kp LS(LA(LC(LEFT_GUI)))  &kp W           &kp E               &kp R             &kp T        &kp Y        &kp U              &kp I                &kp O            &kp RS(RA(RC(RIGHT_GUI)))  &none
-&kp Q  &mt LEFT_GUI A            &mt LEFT_ALT S  &mt LEFT_CONTROL D  &mt LEFT_SHIFT F  &kp G        &kp H        &mt RIGHT_SHIFT J  &mt RIGHT_CONTROL K  &mt RIGHT_ALT L  &mt RIGHT_GUI SEMICOLON    &kp P
-&none  &kp Z                     &kp X           &kp C               &kp V             &kp B        &kp N        &kp M              &kp COMMA            &kp DOT          &kp FSLH                   &none
-                                                 &lt 5 DELETE        &lt 3 ESCAPE      &lt 4 TAB    &lt 6 ENTER  &lt 1 SPACE        &lt 2 BACKSPACE
+&none  &none           &kp W           &kp E               &kp R             &kp T                         &kp Y                        &kp U              &kp I                &kp O            &none                    &none
+&kp Q  &mt LEFT_GUI A  &mt LEFT_ALT S  &mt LEFT_CONTROL D  &mt LEFT_SHIFT F  &mt LS(LA(LC(LEFT_GUI))) G    &mt RS(RA(RC(RIGHT_GUI))) H  &mt RIGHT_SHIFT J  &mt RIGHT_CONTROL K  &mt RIGHT_ALT L  &mt RIGHT_GUI SEMICOLON  &kp P
+&none  &kp Z           &kp X           &kp C               &kp V             &kp B                         &kp N                        &kp M              &kp COMMA            &kp DOT          &kp FSLH                 &none
+                                       &lt 5 DELETE        &lt 3 ESCAPE      &lt 4 TAB                     &lt 6 ENTER                  &lt 1 SPACE        &lt 2 BACKSPACE
             >;
         };
 
@@ -126,18 +74,18 @@
 
         mouse_layer {
             bindings = <
-&trans  &trans    &trans    &trans     &trans     &trans    &trans          &kp K_MUTE      &kp C_VOL_DN  &kp C_VOLUME_UP  &trans      &trans
-&trans  &kp LGUI  &kp LALT  &kp LCTRL  &kp LSHFT  &trans    &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP  &mmv MOVE_RIGHT  &kp K_PREV  &kp K_NEXT
-&trans  &trans    &trans    &trans     &trans     &trans    &msc SCRL_LEFT  &msc SCRL_DOWN  &msc SCRL_UP  &msc SCRL_RIGHT  &trans      &trans
+&trans  &trans    &trans    &trans     &trans     &trans    &trans          &trans          &trans        &trans           &trans  &trans
+&trans  &kp LGUI  &kp LALT  &kp LCTRL  &kp LSHFT  &trans    &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP  &mmv MOVE_RIGHT  &trans  &trans
+&trans  &trans    &trans    &trans     &trans     &trans    &msc SCRL_LEFT  &msc SCRL_DOWN  &msc SCRL_UP  &msc SCRL_RIGHT  &trans  &trans
                             &trans     &trans     &trans    &mkp RCLK       &mkp LCLK       &mkp MCLK
             >;
         };
 
         misc_layer {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans    &bt BT_SEL 0  &bt BT_SEL 1      &bt BT_PRV      &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &bt BT_SEL 2  &bt BT_SEL 3      &bt BT_NXT      &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &bt BT_SEL 4  &bt BT_CLR        &bt BT_CLR_ALL  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans    &bt BT_SEL 0  &bt BT_SEL 1      &bt BT_PRV      &kp C_VOLUME_UP    &trans          &trans
+&trans  &trans  &trans  &trans  &trans  &trans    &bt BT_SEL 2  &bt BT_SEL 3      &bt BT_NXT      &kp C_VOLUME_DOWN  &kp C_PREVIOUS  &kp C_NEXT
+&trans  &trans  &trans  &trans  &trans  &trans    &bt BT_SEL 4  &bt BT_CLR        &bt BT_CLR_ALL  &kp K_MUTE         &trans          &trans
                         &trans  &trans  &trans    &kp C_STOP    &kp C_PLAY_PAUSE  &trans
             >;
         };
@@ -148,35 +96,6 @@
 &kp RS(LBKT)  &kp RS(SQT)    &kp RS(N4)  &kp RS(N5)   &kp RS(N6)  &kp RS(EQUAL)    &trans  &kp RSHFT  &kp RCTRL  &kp RALT  &kp RGUI  &trans
 &trans        &kp RS(GRAVE)  &kp RS(N1)  &kp RS(N2)   &kp RS(N3)  &kp RS(BSLH)     &trans  &trans     &trans     &trans    &trans    &trans
                                          &kp RS(DOT)  &kp RS(N0)  &kp RS(MINUS)    &trans  &trans     &trans
-            >;
-        };
-
-        fusion360 {
-            display-name = "fusion360";
-            bindings = <
-&trans  &trans          &kp W           &kp E                   &kp R                  &kp T        &trans  &trans  &trans  &trans  &trans  &trans
-&kp Q   &mt LEFT_GUI A  &mt LEFT_ALT S  &mt LEFT_CONTROL D      &mt LEFT_SHIFT F       &kp G        &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &kp Z           &kp X           &kp C                   &kp V                  &kp B        &trans  &trans  &trans  &trans  &trans  &trans
-                                        &mt LEFT_GUI BACKSPACE  &mt LEFT_SHIFT ESCAPE  &lt 9 TAB    &trans  &trans  &trans
-            >;
-        };
-
-        numeric_keypad {
-            bindings = <
-&trans  &trans        &kp N7  &kp N8   &kp N9  &kp BSPC     &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &kp ASTERISK  &kp N4  &kp N5   &kp N6  &kp MINUS    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &kp FSLH      &kp N1  &kp N2   &kp N3  &kp PLUS     &trans  &trans  &trans  &trans  &trans  &trans
-                              &kp DOT  &kp N0  &kp ENTER    &trans  &trans  &trans
-            >;
-        };
-
-        fusion_right {
-            display-name = "fusion360_right";
-            bindings = <
-&trans  &trans             &kp O           &kp I                   &kp U                  &kp Y     &trans  &trans  &trans  &trans  &trans  &trans
-&kp P   &mt LEFT_GUI SEMI  &mt LEFT_ALT L  &mt LEFT_CONTROL K      &mt LEFT_SHIFT J       &kp H     &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &kp FSLH           &kp DOT         &kp COMMA               &kp M                  &kp N     &trans  &trans  &trans  &trans  &trans  &trans
-                                           &mt LEFT_GUI BACKSPACE  &mt LEFT_SHIFT ESCAPE  &trans    &trans  &trans  &trans
             >;
         };
     };
