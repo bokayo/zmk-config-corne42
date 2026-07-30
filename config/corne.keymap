@@ -25,6 +25,35 @@
 };
 
 / {
+    combos {
+        compatible = "zmk,combos";
+
+        combo_enter {
+            bindings = <&kp ENTER>;
+            key-positions = <19 20>;
+        };
+
+        combo_minus {
+            bindings = <&kp KP_MINUS>;
+            key-positions = <16 15>;
+        };
+
+        combo_underscore {
+            bindings = <&kp UNDER>;
+            key-positions = <28 27>;
+        };
+
+        combo_right_paren {
+            bindings = <&kp RIGHT_PARENTHESIS>;
+            key-positions = <31 32>;
+        };
+
+        combo_caps_word {
+            bindings = <&caps_word>;
+            key-positions = <7 8>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
@@ -41,7 +70,7 @@
 &none  &none           &kp W           &kp E               &kp R             &kp T                         &kp Y                        &kp U              &kp I                &kp O            &none                    &none
 &kp Q  &mt LEFT_GUI A  &mt LEFT_ALT S  &mt LEFT_CONTROL D  &mt LEFT_SHIFT F  &mt LS(LA(LC(LEFT_GUI))) G    &mt RS(RA(RC(RIGHT_GUI))) H  &mt RIGHT_SHIFT J  &mt RIGHT_CONTROL K  &mt RIGHT_ALT L  &mt RIGHT_GUI SEMICOLON  &kp P
 &none  &kp Z           &kp X           &kp C               &kp V             &kp B                         &kp N                        &kp M              &kp COMMA            &kp DOT          &kp FSLH                 &none
-                                       &lt 5 DELETE        &lt 3 ESCAPE      &lt 4 TAB                     &lt 6 ENTER                  &lt 1 SPACE        &lt 2 BACKSPACE
+                                       &lt 5 DELETE        &lt 3 ESCAPE      &lt 4 TAB                     &lt 6 SPACE                  &lt 1 SPACE        &lt 2 BACKSPACE
             >;
         };
 
