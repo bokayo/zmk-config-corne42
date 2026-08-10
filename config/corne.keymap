@@ -25,17 +25,21 @@
 };
 
 / {
+    behaviors {
+        td_l6: tap_dance_layer_6 {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&mo 6>, <&kp ENTER>;
+        };
+    };
+
     combos {
         compatible = "zmk,combos";
 
-        combo_enter {
-            bindings = <&kp ENTER>;
-            key-positions = <19 20>;
-        };
-
         combo_minus {
             bindings = <&kp KP_MINUS>;
-            key-positions = <16 15>;
+            key-positions = <3 4>;
         };
 
         combo_underscore {
@@ -70,7 +74,7 @@
 &none  &none           &kp W           &kp E               &kp R             &kp T                         &kp Y                        &kp U              &kp I                &kp O            &none                    &none
 &kp Q  &mt LEFT_GUI A  &mt LEFT_ALT S  &mt LEFT_CONTROL D  &mt LEFT_SHIFT F  &mt LS(LA(LC(LEFT_GUI))) G    &mt RS(RA(RC(RIGHT_GUI))) H  &mt RIGHT_SHIFT J  &mt RIGHT_CONTROL K  &mt RIGHT_ALT L  &mt RIGHT_GUI SEMICOLON  &kp P
 &none  &kp Z           &kp X           &kp C               &kp V             &kp B                         &kp N                        &kp M              &kp COMMA            &kp DOT          &kp FSLH                 &none
-                                       &lt 5 DELETE        &lt 3 ESCAPE      &lt 4 TAB                     &lt 6 SPACE                  &lt 1 SPACE        &lt 2 BACKSPACE
+                                       &lt 5 DELETE        &lt 3 ESCAPE      &lt 4 TAB                     &td_l6                       &lt 1 SPACE        &lt 2 BACKSPACE
             >;
         };
 
