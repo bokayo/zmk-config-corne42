@@ -1,0 +1,599 @@
+<title>Corne42 Keymap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#e8eaec;
+    --surface:#f7f8f9;
+    --surface-2:#dfe2e5;
+    --cap-hi:linear-gradient(180deg,rgba(255,255,255,.65),rgba(255,255,255,0) 46%);
+    --ink:#23272b;
+    --ink-soft:#59616a;
+    --ink-faint:#a2a9b0;
+    --line:#cfd4d8;
+    --accent:#0f8577;
+    --accent-soft:#d3e8e4;
+    --hold:#bd6425;
+    --hold-soft:#f0ded0;
+    --shadow:0 1px 0 rgba(20,24,28,.04),0 2px 4px rgba(20,24,28,.06);
+    --radius:12px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#16181a;
+      --surface:#282b2e;
+      --surface-2:#1c1e20;
+      --cap-hi:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 46%);
+      --ink:#e7e9ea;
+      --ink-soft:#9aa1a8;
+      --ink-faint:#5f6469;
+      --line:#383c40;
+      --accent:#33c8b7;
+      --accent-soft:#173a36;
+      --hold:#e18a45;
+      --hold-soft:#3a2c1e;
+      --shadow:0 1px 0 rgba(0,0,0,.25),0 2px 5px rgba(0,0,0,.32);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#16181a;
+    --surface:#282b2e;
+    --surface-2:#1c1e20;
+    --cap-hi:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 46%);
+    --ink:#e7e9ea;
+    --ink-soft:#9aa1a8;
+    --ink-faint:#5f6469;
+    --line:#383c40;
+    --accent:#33c8b7;
+    --accent-soft:#173a36;
+    --hold:#e18a45;
+    --hold-soft:#3a2c1e;
+    --shadow:0 1px 0 rgba(0,0,0,.25),0 2px 5px rgba(0,0,0,.32);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:34px 20px 56px}
+
+  header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:26px}
+  h1{
+    font-size:clamp(1.5rem,4vw,2.05rem);font-weight:800;letter-spacing:-.02em;
+    margin:0 0 4px;text-wrap:balance;
+  }
+  .sub{margin:0;color:var(--ink-soft);font-size:.95rem;max-width:56ch}
+  .sub code{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:.85em;color:var(--ink)}
+
+  .theme{
+    flex:none;appearance:none;border:1px solid var(--line);background:var(--surface);
+    color:var(--ink-soft);border-radius:9px;width:38px;height:38px;cursor:pointer;
+    font-size:15px;display:grid;place-items:center;transition:color .15s,border-color .15s;
+  }
+  .theme:hover{color:var(--accent);border-color:var(--accent)}
+
+  /* ---- layer tabs ---- */
+  .tabs{
+    display:flex;flex-wrap:wrap;gap:6px;background:var(--surface-2);
+    padding:6px;border-radius:12px;
+  }
+  .tab{
+    appearance:none;border:0;cursor:pointer;flex:1 1 auto;min-width:92px;
+    background:transparent;color:var(--ink-soft);
+    padding:9px 10px 8px;border-radius:8px;font-family:inherit;
+    display:flex;flex-direction:column;align-items:center;gap:1px;
+    transition:background .15s,color .15s;
+  }
+  .tab b{font-size:.95rem;font-weight:700;letter-spacing:-.01em}
+  .tab span{
+    font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--ink-faint)
+  }
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .tab[aria-selected="true"] span{color:var(--accent)}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .reach{
+    margin:12px 2px 20px;font-size:.86rem;color:var(--ink-soft);
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .reach .pill{
+    font-family:"IBM Plex Mono",monospace;font-size:.74rem;
+    background:var(--hold-soft);color:var(--hold);padding:3px 8px;border-radius:999px;
+    letter-spacing:.02em;
+  }
+  .reach .pill.base{background:var(--accent-soft);color:var(--accent)}
+
+  /* ---- keyboard ---- */
+  .kb-card{
+    overflow-x:auto;background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+  }
+  .kb{
+    --u:clamp(25px,4.7vw,44px);
+    background:var(--surface-2);padding:12px;border-radius:11px;
+    display:flex;flex-direction:column;gap:5px;width:max-content;margin:0 auto;
+  }
+  .krow{display:flex;gap:5px}
+  .key{
+    --w:1;
+    flex:0 0 calc(var(--u) * var(--w) + (var(--w) - 1) * 5px);
+    height:var(--u);position:relative;
+    background:var(--cap-hi),var(--surface);
+    border:1px solid var(--line);border-bottom-width:2px;border-radius:7px;
+    box-shadow:var(--shadow);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    color:var(--ink);cursor:default;padding:0;
+    transition:transform .12s ease,background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  .key .main{font-size:clamp(9px,1.5vw,13px);line-height:1;font-weight:500;pointer-events:none}
+  .key.sm .main{font-size:clamp(7px,1.15vw,9.5px);letter-spacing:-.01em}
+  .key.has-front .main{transform:translateY(-4px)}
+  .key .front{
+    position:absolute;left:0;right:0;bottom:3px;text-align:center;
+    font-size:clamp(6px,.95vw,7.5px);letter-spacing:.02em;text-transform:uppercase;
+    white-space:nowrap;color:var(--hold);font-weight:600;pointer-events:none;
+  }
+  .key:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .key:focus-visible{outline:2px solid var(--accent);outline-offset:2px;z-index:3}
+
+  .key.ghost{background:var(--surface);border-style:solid;box-shadow:none;opacity:.5}
+  .key.ghost .main{color:var(--ink-faint);font-weight:400}
+
+  .key.mod,.key.pmod{background:var(--cap-hi),var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+  .key.mod .front,.key.pmod .front{color:var(--accent)}
+
+  .key.layer{background:var(--cap-hi),var(--hold-soft);border-color:color-mix(in srgb,var(--hold) 45%,var(--line))}
+
+  .key.active{
+    background:var(--cap-hi),var(--hold-soft);
+    outline:2px dashed var(--hold);outline-offset:1px;
+    animation:pulse 1.7s ease-in-out infinite;
+  }
+  .key.active .main{color:var(--hold);opacity:.6}
+  .key.active .front{color:var(--hold)}
+  @keyframes pulse{50%{outline-color:color-mix(in srgb,var(--hold) 30%,transparent)}}
+
+  .key.dead{background:repeating-linear-gradient(-45deg,var(--surface-2) 0 5px,transparent 5px 10px),var(--surface);box-shadow:none;border-style:dashed}
+  .key.dead .main{color:var(--ink-faint)}
+  .key.dead:hover{transform:none;border-color:var(--line)}
+
+  .key.arrow .main{font-size:clamp(12px,2vw,17px)}
+  .key.arrow{background:var(--cap-hi),var(--accent-soft)}
+  .key.updown{flex-direction:column;gap:1px}
+  .key.updown .ud{font-size:8px;line-height:1;color:var(--ink-faint)}
+  .key.edit .main{color:var(--accent)}
+  .key.reloc{border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+  .key.reloc::after{
+    content:"⤴";position:absolute;top:2px;right:3px;font-size:8px;color:var(--accent);
+  }
+  .key.combo::before{
+    content:"";position:absolute;top:3px;left:3px;width:4px;height:4px;border-radius:50%;
+    background:var(--accent);
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .key,.tab,.theme{transition:none}
+    .key:hover{transform:none}
+    .key.active{animation:none}
+  }
+
+  /* ---- cards ---- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  @media (max-width:680px){.grid2{grid-template-columns:1fr}}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;box-shadow:var(--shadow);
+  }
+  .card h2{
+    margin:0 0 12px;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;
+    color:var(--ink-soft);font-weight:700;
+  }
+
+  .legend ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+  .legend li{display:flex;align-items:center;gap:10px;font-size:.83rem;color:var(--ink-soft)}
+  .sw{flex:none;width:26px;height:26px;border-radius:6px;border:1px solid var(--line);border-bottom-width:2px}
+  .sw.mod{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+  .sw.layer{background:var(--hold-soft);border-color:color-mix(in srgb,var(--hold) 45%,var(--line))}
+  .sw.arrow{background:var(--accent-soft)}
+  .sw.ghost{background:var(--surface-2);opacity:.6}
+  .sw.dead{background:repeating-linear-gradient(-45deg,var(--surface-2) 0 4px,transparent 4px 8px),var(--surface);border-style:dashed}
+  .sw.active{background:var(--hold-soft);border:2px dashed var(--hold)}
+  .legend b{color:var(--ink);font-weight:600}
+
+  .combos-list{display:grid;gap:12px}
+  .combo-row{display:flex;align-items:center;gap:9px;font-size:.85rem}
+  .mini{
+    font-family:"IBM Plex Mono",monospace;font-size:.78rem;
+    min-width:24px;height:26px;padding:0 6px;border-radius:6px;
+    background:var(--cap-hi),var(--surface);border:1px solid var(--line);border-bottom-width:2px;
+    display:inline-flex;align-items:center;justify-content:center;color:var(--ink)
+  }
+  .combo-row .plus,.combo-row .arr{color:var(--ink-faint);font-size:.8rem}
+  .combo-row .out{
+    font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--accent);
+    background:var(--accent-soft);padding:3px 9px;border-radius:6px;font-size:.8rem
+  }
+  .combos small{display:block;margin-top:12px;color:var(--ink-faint);font-size:.74rem}
+
+  .hrm{margin-top:16px}
+  .hands{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+  .hand{display:flex;gap:5px}
+  .hcap{
+    width:44px;height:52px;border-radius:7px;
+    background:var(--cap-hi),var(--accent-soft);
+    border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-bottom-width:2px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    font-family:"IBM Plex Mono",monospace
+  }
+  .hcap .l{font-size:14px;font-weight:600;color:var(--ink)}
+  .hcap .m{font-size:8px;text-transform:uppercase;letter-spacing:.03em;color:var(--accent);font-weight:600}
+  .hrm p{margin:12px 0 0;font-size:.78rem;color:var(--ink-faint);text-align:center}
+
+  footer{
+    margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+    font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-faint);
+    display:flex;gap:8px 16px;flex-wrap:wrap
+  }
+
+  /* tooltip */
+  .tip{
+    position:fixed;z-index:50;pointer-events:none;max-width:230px;
+    background:var(--ink);color:var(--bg);
+    padding:7px 10px;border-radius:7px;font-size:.76rem;line-height:1.4;
+    box-shadow:0 6px 20px rgba(0,0,0,.28);
+  }
+  .tip b{font-family:"IBM Plex Mono",monospace}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Corne42 Keymap</h1>
+      <p class="sub">Five kanata layers, ported from the ZMK Corne config to a standard keyboard. Source: <code>kanata/kanata.kbd</code></p>
+    </div>
+    <button class="theme" id="theme" aria-label="Toggle light / dark">◐</button>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Keymap layers" id="tabs"></div>
+  <p class="reach" id="reach"></p>
+
+  <div class="kb-card">
+    <div class="kb" id="kb"></div>
+  </div>
+
+  <div class="grid2">
+    <section class="card legend">
+      <h2>Legend</h2>
+      <ul>
+        <li><span class="sw mod"></span><span><b>Home-row mod</b> — tap the letter, hold for a modifier</span></li>
+        <li><span class="sw layer"></span><span><b>Layer key</b> — tap sends a key, hold shifts layer</span></li>
+        <li><span class="sw active"></span><span><b>Held now</b> — the key you hold to reach this layer</span></li>
+        <li><span class="sw arrow"></span><span><b>Arrows / edit</b> — navigation &amp; ⌘ clipboard</span></li>
+        <li><span class="sw ghost"></span><span><b>Transparent</b> — falls through to the base layer</span></li>
+        <li><span class="sw dead"></span><span><b>Dead</b> — physical <b>q</b> / <b>p</b> are disabled on purpose</span></li>
+      </ul>
+    </section>
+
+    <section class="card combos">
+      <h2>Combos <span style="color:var(--ink-faint);font-weight:400;text-transform:none;letter-spacing:0">· any layer</span></h2>
+      <div class="combos-list" id="combos"></div>
+      <small>40 ms window · from the four ZMK combos</small>
+    </section>
+  </div>
+
+  <section class="card hrm">
+    <h2>Base home-row mods · <span style="color:var(--ink-faint);font-weight:400;letter-spacing:0;text-transform:none">G / H = hyper (⌘⌥⌃⇧)</span></h2>
+    <div class="hands" id="hands"></div>
+    <p>tap-preferred: the hold only fires after 170 ms, so key rolls always type the letter</p>
+  </section>
+
+  <footer>
+    <span>tap / hold 170 ms</span><span>quick-tap 100 ms</span><span>MOU + MISC layers omitted</span><span>edit keys = macOS ⌘</span>
+  </footer>
+</div>
+
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // physical keyboard (standard 60% ANSI) matching the kanata defsrc
+  const TEMPLATE = [
+    [["grv","`"],["n1","1"],["n2","2"],["n3","3"],["n4","4"],["n5","5"],["n6","6"],["n7","7"],["n8","8"],["n9","9"],["n0","0"],["minus","-"],["eq","="],["bspc","⌫",2]],
+    [["tab","⇥",1.5],["q","Q"],["w","W"],["e","E"],["r","R"],["t","T"],["y","Y"],["u","U"],["i","I"],["o","O"],["p","P"],["lbrc","["],["rbrc","]"],["bsls","\\",1.5]],
+    [["caps","⇪",1.75],["a","A"],["s","S"],["d","D"],["f","F"],["g","G"],["h","H"],["j","J"],["k","K"],["l","L"],["scln",";"],["quot","'"],["ret","⏎",2.25]],
+    [["lsft","⇧",2.25],["z","Z"],["x","X"],["c","C"],["v","V"],["b","B"],["n","N"],["m","M"],["comm",","],["dot","."],["slsh","/"],["rsft","⇧",2.75]],
+    [["fn","fn",1],["lctl","⌃",1],["lalt","⌥",1],["lmet","⌘",1.25],["spc","",5.5],["rmet","⌘",1.25],["ralt","⌥",1],["larr","←",1],["udar","↕",1],["rarr","→",1]]
+  ];
+  // ^ MacBook bottom row: fn ⌃ ⌥ ⌘ · space · ⌘ ⌥ · arrow cluster
+
+  const M = (t,f)=>({t,f,role:"mod"});
+  const baseMods = {
+    a:M("A","⌘ L·GUI"), s:M("S","⌥ L·ALT"), d:M("D","⌃ L·CTL"), f:M("F","⇧ L·SFT"), g:M("G","✦ HYPER"),
+    h:M("H","✦ HYPER"), j:M("J","⇧ R·SFT"), k:M("K","⌃ R·CTL"), l:M("L","⌥ R·ALT"), scln:M(";","⌘ R·GUI")
+  };
+  const rMods = {
+    j:{t:"⇧",f:"R SFT",role:"pmod"}, k:{t:"⌃",f:"R CTL",role:"pmod"},
+    l:{t:"⌥",f:"R ALT",role:"pmod"}, scln:{t:"⌘",f:"R GUI",role:"pmod"}
+  };
+
+  const LAYERS = {
+    base:{ name:"Base", gloss:"letters", reach:["Default layer — home-row mods & combos live here","base"], ov:Object.assign({},baseMods,{
+      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+      caps:{t:"Q",role:"reloc"}, quot:{t:"P",role:"reloc"},
+      lmet:{t:"Esc",f:"nav",role:"layer"}, spc:{t:"Space",f:"func",role:"layer"},
+      ralt:{t:"Bspc",f:"num",role:"layer"}, rmet:{t:"Enter",f:"sym",role:"layer"}
+    })},
+    numbers:{ name:"Num", gloss:"digits", activator:"ralt", reach:["Hold Right ⌥  (taps as Bspc)","num"], ov:Object.assign({},rMods,{
+      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+      w:{t:"7",role:"num"}, e:{t:"8",role:"num"}, r:{t:"9",role:"num"}, t:{t:"]",role:"sym"},
+      caps:{t:"[",role:"sym"},
+      a:{t:"'",role:"sym"}, s:{t:"4",role:"num"}, d:{t:"5",role:"num"}, f:{t:"6",role:"num"}, g:{t:"=",role:"sym"},
+      z:{t:"`",role:"sym"}, x:{t:"1",role:"num"}, c:{t:"2",role:"num"}, v:{t:"3",role:"num"}, b:{t:"\\",role:"sym"},
+      lmet:{t:"−",role:"sym"}, spc:{t:"0",role:"num"}
+    })},
+    symbols:{ name:"Sym", gloss:"shifted", activator:"rmet", reach:["Hold Right ⌘  (taps as Enter)","sym"], ov:Object.assign({},rMods,{
+      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+      w:{t:"&",role:"sym"}, e:{t:"*",role:"sym"}, r:{t:"(",role:"sym"}, t:{t:"}",role:"sym"},
+      caps:{t:"{",role:"sym"},
+      a:{t:'"',role:"sym"}, s:{t:"$",role:"sym"}, d:{t:"%",role:"sym"}, f:{t:"^",role:"sym"}, g:{t:"+",role:"sym"},
+      z:{t:"~",role:"sym"}, x:{t:"!",role:"sym"}, c:{t:"@",role:"sym"}, v:{t:"#",role:"sym"}, b:{t:"|",role:"sym"},
+      lmet:{t:"_",role:"sym"}, spc:{t:")",role:"sym"}
+    })},
+    functionk:{ name:"Fn", gloss:"F-keys", activator:"spc", reach:["Hold Space","func"], ov:Object.assign({},rMods,{
+      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+      w:{t:"F7"}, e:{t:"F8"}, r:{t:"F9"}, t:{t:"⇧⌘3",f:"shot",role:"edit"},
+      caps:{t:"F12"},
+      a:{t:"F11"}, s:{t:"F4"}, d:{t:"F5"}, f:{t:"F6"}, g:{t:"ScrLk"},
+      z:{t:"F10"}, x:{t:"F1"}, c:{t:"F2"}, v:{t:"F3"}, b:{t:"Pause"}
+    })},
+    nav:{ name:"Nav", gloss:"move · edit", activator:"lmet", reach:["Hold Left ⌘  (taps as Esc)","nav"], ov:{
+      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+      a:{t:"⌘",f:"L GUI",role:"pmod"}, s:{t:"⌥",f:"L ALT",role:"pmod"}, d:{t:"⌃",f:"L CTL",role:"pmod"}, f:{t:"⇧",f:"L SFT",role:"pmod"},
+      spc:{t:"Tab",note:"Space bar → Tab while NAV is held"},
+      y:{t:"⇧⌘Z",f:"redo",role:"edit"}, u:{t:"⌘V",f:"paste",role:"edit"}, i:{t:"⌘C",f:"copy",role:"edit"}, o:{t:"⌘X",f:"cut",role:"edit"},
+      h:{t:"←",role:"arrow"}, j:{t:"↓",role:"arrow"}, k:{t:"↑",role:"arrow"}, l:{t:"→",role:"arrow"},
+      scln:{t:"⇪",f:"caps lk"},
+      quot:{t:"⌘Z",f:"undo",role:"edit"},
+      n:{t:"Home"}, m:{t:"PgDn"}, comm:{t:"PgUp"}, dot:{t:"End"}, slsh:{t:"Ins"}
+    }}
+  };
+
+  const COMBOS = [
+    {k:["E","R"], out:"-"},
+    {k:["C","V"], out:"_"},
+    {k:["M",","], out:")"},
+    {k:["U","I"], out:"Caps Word"}
+  ];
+  const COMBO_CODES = new Set(["e","r","c","v","m","comm","u","i"]);
+
+  const order = ["base","numbers","symbols","functionk","nav"];
+  let current = "base";
+
+  const kb = document.getElementById("kb");
+  const tabsEl = document.getElementById("tabs");
+  const reachEl = document.getElementById("reach");
+  const tip = document.getElementById("tip");
+  const cells = {};
+
+  // build tabs
+  order.forEach((id,idx)=>{
+    const L = LAYERS[id];
+    const b = document.createElement("button");
+    b.className = "tab"; b.type = "button";
+    b.setAttribute("role","tab");
+    b.dataset.layer = id;
+    b.id = "tab-"+id;
+    b.innerHTML = '<b>'+L.name+'</b><span>'+L.gloss+'</span>';
+    b.addEventListener("click",()=>select(id));
+    b.addEventListener("keydown",e=>{
+      if(e.key==="ArrowRight"||e.key==="ArrowLeft"){
+        e.preventDefault();
+        const d = e.key==="ArrowRight"?1:-1;
+        const ni = (idx+d+order.length)%order.length;
+        select(order[ni]); tabsEl.children[ni].focus();
+      }
+    });
+    tabsEl.appendChild(b);
+  });
+
+  // build keyboard
+  TEMPLATE.forEach(row=>{
+    const r = document.createElement("div");
+    r.className = "krow";
+    row.forEach(([code,label,w])=>{
+      const k = document.createElement("button");
+      k.className = "key"; k.type = "button";
+      k.style.setProperty("--w", w||1);
+      k.dataset.code = code;
+      k.dataset.def = label;
+      if(code==="udar") k.innerHTML = '<span class="ud">↑</span><span class="ud">↓</span>';
+      else k.innerHTML = '<span class="main"></span><span class="front"></span>';
+      k.addEventListener("pointerenter",showTip);
+      k.addEventListener("pointerleave",hideTip);
+      k.addEventListener("pointermove",moveTip);
+      k.addEventListener("focus",e=>showTip(e,true));
+      k.addEventListener("blur",hideTip);
+      cells[code] = k;
+      r.appendChild(k);
+    });
+    kb.appendChild(r);
+  });
+
+  // combos card
+  const combosEl = document.getElementById("combos");
+  COMBOS.forEach(c=>{
+    const row = document.createElement("div");
+    row.className = "combo-row";
+    row.innerHTML =
+      '<span class="mini">'+c.k[0]+'</span><span class="plus">+</span><span class="mini">'+c.k[1]+'</span>'+
+      '<span class="arr">→</span><span class="out">'+c.out+'</span>';
+    combosEl.appendChild(row);
+  });
+
+  // home-row mod hands
+  const hands = document.getElementById("hands");
+  const handData = [
+    [["A","⌘"],["S","⌥"],["D","⌃"],["F","⇧"],["G","✦"]],
+    [["H","✦"],["J","⇧"],["K","⌃"],["L","⌥"],[";","⌘"]]
+  ];
+  handData.forEach(h=>{
+    const el = document.createElement("div");
+    el.className = "hand";
+    h.forEach(([l,m])=>{
+      const c = document.createElement("div");
+      c.className = "hcap";
+      c.innerHTML = '<span class="l">'+l+'</span><span class="m">'+m+'</span>';
+      el.appendChild(c);
+    });
+    hands.appendChild(el);
+  });
+
+  function render(){
+    const L = LAYERS[current];
+    const isBase = current==="base";
+    Object.keys(cells).forEach(code=>{
+      const k = cells[code];
+      const ov = L.ov[code];
+      const def = k.dataset.def;
+
+      if(code==="udar"){
+        k.className = "key updown" + (isBase?"":" ghost");
+        k.dataset.tipTitle = "Arrow keys — not mapped, always active";
+        return;
+      }
+
+      let mainTxt="", frontTxt="", cls="key";
+
+      if(L.activator===code){
+        cls += " active";
+        const bs = LAYERS.base.ov[code];
+        mainTxt = bs ? bs.t : def;
+        frontTxt = "hold";
+      } else if(ov){
+        mainTxt = ov.t;
+        frontTxt = ov.f || "";
+        if(ov.role) cls += " "+ov.role;
+        if(ov.role==="reloc") cls += "";
+      } else {
+        const bs = LAYERS.base.ov[code];
+        mainTxt = bs ? bs.t : def;
+        if(!isBase) cls += " ghost";
+      }
+
+      if(isBase && COMBO_CODES.has(code)) cls += " combo";
+      if(frontTxt) cls += " has-front";
+      if(mainTxt && mainTxt.length>2) cls += " sm";
+
+      k.className = cls;
+      k.querySelector(".main").textContent = mainTxt;
+      k.querySelector(".front").textContent = frontTxt;
+      k.dataset.tipTitle = buildTip(code,ov,L,def);
+    });
+
+    // tabs
+    [...tabsEl.children].forEach(t=>{
+      const on = t.dataset.layer===current;
+      t.setAttribute("aria-selected", on?"true":"false");
+      t.tabIndex = on?0:-1;
+    });
+
+    // reach line
+    const [txt,tag] = L.reach;
+    reachEl.innerHTML = '<span class="pill'+(isBase?" base":"")+'">'+L.name.toUpperCase()+'</span><span>'+txt+'</span>';
+  }
+
+  function buildTip(code,ov,L,def){
+    if(code==="fn") return "fn — macOS reserves this key; kanata can't remap it";
+    if(code==="larr"||code==="rarr") return "Arrow key — not mapped, always active";
+    if(L.activator===code) return "Hold to stay in the "+L.name+" layer";
+    if(ov && ov.note) return ov.note;
+    if(!ov){
+      const bs = LAYERS.base.ov[code];
+      const bv = bs ? bs.t : def;
+      if(L===LAYERS.base) return bv+" — types normally";
+      return "Transparent → base layer ("+bv+")";
+    }
+    if(ov.role==="dead") return "Disabled — press CapsLock for Q, ' for P";
+    if(ov.role==="reloc") return ov.t+" — relocated here; the top-row "+ov.t.toLowerCase()+" key is dead";
+    if(ov.role==="mod"){
+      const nm = ov.f==="✦ HYPER" ? "Hyper (⌘⌥⌃⇧)" : ov.f;
+      return "tap "+ov.t+"  ·  hold "+nm;
+    }
+    if(ov.role==="pmod") return ov.f+" — plain modifier while this layer is held";
+    if(ov.role==="layer") return "tap "+ov.t+"  ·  hold → "+ov.f.toUpperCase()+" layer";
+    if(ov.role==="edit") return ov.t+"  ·  "+(ov.f||"");
+    return String(ov.t);
+  }
+
+  // tooltip
+  let tipKey=null;
+  function showTip(e,isFocus){
+    const k = e.currentTarget;
+    tipKey = k;
+    const title = k.dataset.tipTitle || "";
+    if(!title){ hideTip(); return; }
+    const mainEl = k.querySelector(".main");
+    tip.innerHTML = '<b>'+((mainEl&&mainEl.textContent)||k.dataset.def)+'</b> — '+title;
+    tip.hidden = false;
+    const r = k.getBoundingClientRect();
+    if(isFocus || e.clientX===undefined) placeTip(r.left + r.width/2, r.top);
+    else placeTip(e.clientX, e.clientY + 18);
+  }
+  function moveTip(e){ if(tipKey) placeTip(e.clientX, e.clientY + 18); }
+  function placeTip(x,y){
+    const w = tip.offsetWidth, h = tip.offsetHeight, pad=8;
+    let left = x - w/2, top = y - h - 10;
+    left = Math.max(pad, Math.min(left, innerWidth - w - pad));
+    if(top < pad) top = y + 22;
+    tip.style.left = left+"px";
+    tip.style.top = top+"px";
+  }
+  function hideTip(){ tip.hidden = true; tipKey=null; }
+
+  function select(id){
+    if(!LAYERS[id]) return;
+    current = id;
+    render();
+    try{ history.replaceState(null,"","#"+id); }catch(_){}
+  }
+
+  // number-key shortcuts
+  addEventListener("keydown",e=>{
+    if(e.target instanceof Element && e.target.closest("input,textarea")) return;
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    const n = parseInt(e.key,10);
+    if(n>=1 && n<=order.length){ select(order[n-1]); }
+  });
+
+  // theme toggle
+  const themeBtn = document.getElementById("theme");
+  function resolvedDark(){
+    const a = document.documentElement.getAttribute("data-theme");
+    if(a) return a==="dark";
+    return matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  try{
+    const saved = localStorage.getItem("keymap-theme");
+    if(saved) document.documentElement.setAttribute("data-theme",saved);
+  }catch(_){}
+  themeBtn.addEventListener("click",()=>{
+    const next = resolvedDark() ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme",next);
+    try{ localStorage.setItem("keymap-theme",next); }catch(_){}
+  });
+
+  // initial layer from hash
+  const h = location.hash.replace("#","");
+  if(LAYERS[h]) current = h;
+  render();
+})();
+</script>

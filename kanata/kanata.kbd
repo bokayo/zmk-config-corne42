@@ -1,0 +1,141 @@
+;; =============================================================================
+;;  kanata config  --  port of config/corne.keymap (ZMK) to a standard keyboard
+;; =============================================================================
+;;
+;;  Home-row mods (ZMK &mt block: tapping-term-ms 170, quick-tap-ms 100,
+;;  global-quick-tap, flavor "tap-preferred"):
+;;
+;;      A/;  -> GUI      S/L  -> ALT      D/K  -> CTRL     F/J  -> SHIFT
+;;      G    -> left hyper  (GUI+ALT+CTRL+SHIFT)
+;;      H    -> right hyper (GUI+ALT+CTRL+SHIFT)     [ZMK RS(RA(RC(RGUI)))]
+;;
+;;  plain `tap-hold` == ZMK "tap-preferred": the hold only fires on timeout,
+;;  never on interruption, so key rolls always produce taps.
+;;  first tap-hold arg (100) == ZMK quick-tap-ms / global-quick-tap:
+;;  tap-then-hold within 100 ms repeats the tap.
+;;
+;;  Layer access -- ZMK put these on the Corne thumbs; here they sit on the
+;;  bottom-row modifier keys next to the space bar (GUI/ALT are still covered
+;;  by the home-row mods):
+;;
+;;      Spc         tap Space   hold FUNC   (ZMK &lt 3 SPACE; taps Tab on NAV layer)
+;;      L-Cmd/lmet  tap Esc     hold NAV    (ZMK's NAV thumb tapped Tab -- moved
+;;                                           to Space on the NAV layer)
+;;      R-Opt/ralt  tap Bspc    hold NUM    (ZMK &lt 1 BACKSPACE)
+;;      R-Cmd/rmet  tap Enter   hold SYM    (ZMK SYM tapped Delete; Enter's
+;;                                           ZMK thumb held the dropped MISC)
+;;      L-Opt/lalt  stays a plain Left Option.
+;;
+;;  Q and P are moved off the top row so the physical q / p keys are never
+;;  used, matching the ZMK layout where Q / P sit on the home-row corners:
+;;
+;;      CapsLock -> Q  (+ ZMK position-12 value on every layer)
+;;      '        -> P  (+ ZMK position-23 value on every layer)
+;;      physical q / p -> XX (dead)
+;;
+;;  Divergences from the ZMK keymap (deliberate, for a laptop):
+;;    * MOU (mouse) and MISC (bluetooth/media) layers dropped.
+;;    * ZMK's Esc thumb was `&lt 5(MOU) ESC`; MOU is gone so the real Esc key
+;;      is left alone. ZMK's Enter thumb was MISC; Enter now carries SYM.
+;;    * NAV edit cluster (K_COPY / K_PASTE / K_CUT / K_UNDO / K_REDO) uses macOS
+;;      Cmd shortcuts. On Linux/Windows swap `M-` for `C-`.
+;;    * ZMK T on FUNC = PRINTSCREEN -> macOS full-screen screenshot `M-S-3`
+;;      (kanata on macOS has no print-screen keycode).
+;;    * Combos are global (fire on every layer) exactly like the ZMK combos.
+;; =============================================================================
+
+(defcfg
+  process-unmapped-keys yes
+  concurrent-tap-hold yes
+)
+
+(defsrc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lalt lmet      spc      rmet ralt
+)
+;; ^ MacBook bottom row: fn ⌃ ⌥ ⌘ | space | ⌘ ⌥ arrows.
+;;   fn and the arrow keys are not remapped (fn isn't grabbable on macOS);
+;;   there is no right-Control key on the laptop.
+
+(defvar
+  tap-time 100      ;; ZMK quick-tap-ms
+  hold-time 170     ;; ZMK tapping-term-ms
+)
+
+(defalias
+  ;; -- left-hand home-row mods --------------------------------------------
+  a  (tap-hold $tap-time $hold-time a lmet)
+  s  (tap-hold $tap-time $hold-time s lalt)
+  d  (tap-hold $tap-time $hold-time d lctl)
+  f  (tap-hold $tap-time $hold-time f lsft)
+  g  (tap-hold $tap-time $hold-time g (multi lmet lalt lctl lsft))   ;; left hyper
+  ;; -- right-hand home-row mods ------------------------------------------
+  h  (tap-hold $tap-time $hold-time h (multi rmet ralt rctl rsft))   ;; right hyper
+  j  (tap-hold $tap-time $hold-time j rsft)
+  k  (tap-hold $tap-time $hold-time k rctl)
+  l  (tap-hold $tap-time $hold-time l ralt)
+  ;  (tap-hold $tap-time $hold-time ; rmet)
+  ;; -- layer keys on the bottom-row mods + space -----------------------
+  spc (tap-hold $tap-time $hold-time spc  (layer-while-held functionk))
+  esc (tap-hold $tap-time $hold-time esc  (layer-while-held nav))       ;; left cmd
+  bks (tap-hold $tap-time $hold-time bspc (layer-while-held numbers))   ;; right opt
+  ent (tap-hold $tap-time $hold-time ret  (layer-while-held symbols))   ;; right cmd
+)                                                                       ;; left opt stays plain
+
+;; ZMK combos (key-positions translated to the equivalent letters).
+;; timeout 40 ms, active on every layer -- same as the ZMK combos.
+(defchordsv2
+  (e r)  -                40 first-release ()   ;; combo_minus       (pos 3 4)
+  (c v)  S--              40 first-release ()   ;; combo_underscore  (pos 28 27)
+  (m ,)  S-0              40 first-release ()   ;; combo_right_paren (pos 31 32)
+  (u i)  (caps-word 2000) 40 first-release ()   ;; combo_caps_word   (pos 7 8)
+)
+
+;; -----------------------------------------------------------------------------
+;; caps = Q, ' = P, physical q/p dead.
+(deflayer base
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    XX   _    _    _    _    _    _    _    _    XX   _    _    _
+  q    @a   @s   @d   @f   @g   @h   @j   @k   @l   @;   p    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    @esc      @spc      @ent @bks
+)
+
+;; ZMK num_layer
+(deflayer numbers
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    XX   7    8    9    ]    _    _    _    _    XX   _    _    _
+  [    '    4    5    6    =    _    rsft rctl ralt rmet _    _
+  _    grv  1    2    3    bksl _    _    _    _    _    _
+  _    _    -         0         _    _
+)
+
+;; ZMK sym_layer
+(deflayer symbols
+  _    _      _     _     _     _      _    _    _    _    _    _    _    _
+  _    XX     S-7   S-8   S-9   S-]    _    _    _    _    XX   _    _    _
+  S-[  S-'    S-4   S-5   S-6   S-=    _    rsft rctl ralt rmet _    _
+  _    S-grv  S-1   S-2   S-3   S-bksl _    _    _    _    _    _
+  _    _      S--        S-0        _    _
+)
+
+;; ZMK func_layer  (ZMK T = PRINTSCREEN -> macOS full-screen screenshot M-S-3)
+(deflayer functionk
+  _    _    _    _    _    _     _    _    _    _    _    _    _    _
+  _    XX   F7   F8   F9   M-S-3 _    _    _    _    XX   _    _    _
+  F12  F11  F4   F5   F6   slck  _    rsft rctl ralt rmet _    _
+  _    F10  F1   F2   F3   pause _    _    _    _    _    _
+  _    _    _         _         _    _
+)
+
+;; ZMK nav_layer  (edit cluster = macOS Cmd shortcuts)
+(deflayer nav
+  _    _    _    _    _    _    _     _     _     _     _     _    _    _
+  _    XX   _    _    _    _    M-S-z M-v   M-c   M-x   XX    _    _    _
+  _    lmet lalt lctl lsft _    left  down  up    right caps  M-z  _
+  _    _    _    _    _    _    home  pgdn  pgup  end   ins   _
+  _    _    _         tab       _    _
+)
