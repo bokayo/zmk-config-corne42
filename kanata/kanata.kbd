@@ -137,5 +137,5 @@
   _    XX   _    _    _    _    M-S-z M-v   M-c   M-x   XX    _    _    _
   _    lmet lalt lctl lsft _    left  down  up    right caps  M-z  _
   _    _    _    _    _    _    home  pgdn  pgup  end   ins   _
-  _    _    _         tab       _    _
+  _    _    _         tab       _    del
 )
