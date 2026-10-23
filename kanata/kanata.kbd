@@ -32,8 +32,10 @@
 ;;
 ;;      physical q -> [ / { / F12 on NUM / SYM / FUNC, dead on NAV
 ;;      physical p -> undo on NAV, dead elsewhere
-;;      CapsLock / ' -> plain CapsLock / ' on every layer, except CapsLock = 0
-;;                      on NUM (Space is the NUM hold key)
+;;      CapsLock -> plain CapsLock on every layer, except 0 on NUM (Space is
+;;                  the NUM hold key)
+;;      '        -> Backspace (as on a normal keyboard's pinky); apostrophe
+;;                  is NUM + A, like ZMK where ' only lives on the num layer
 ;;
 ;;  Divergences from the ZMK keymap (deliberate, for a laptop):
 ;;    * MOU (mouse) and MISC (bluetooth/media) layers dropped.
@@ -112,11 +114,11 @@
 )
 
 ;; -----------------------------------------------------------------------------
-;; home-row mods + thumb layer keys; everything else types normally.
+;; home-row mods + thumb layer keys + ' = Backspace; the rest types normally.
 (deflayer base
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    @a   @s   @d   @f   @g   @h   @j   @k   @l   @;   _    _
+  _    @a   @s   @d   @f   @g   @h   @j   @k   @l   @;   bspc _
   _    _    _    _    _    _    _    _    _    _    _    _
   _    _    @esc      @spc      @ent @bks
 )
