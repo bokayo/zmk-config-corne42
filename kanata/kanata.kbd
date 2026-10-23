@@ -18,35 +18,40 @@
 ;;  bottom-row modifier keys next to the space bar (GUI/ALT are still covered
 ;;  by the home-row mods):
 ;;
-;;      Spc         tap Space   hold FUNC   (ZMK &lt 3 SPACE; taps Tab on NAV layer)
+;;      Spc         tap Space   hold NUM    (ZMK &lt 3 SPACE held FUNC; taps Tab on NAV layer)
 ;;      L-Cmd/lmet  tap Esc     hold NAV    (ZMK's NAV thumb tapped Tab -- moved
 ;;                                           to Space on the NAV layer)
-;;      R-Opt/ralt  tap Bspc    hold NUM    (ZMK &lt 1 BACKSPACE)
+;;      R-Opt/ralt  tap Bspc    hold FUNC   (ZMK &lt 1 BACKSPACE held NUM;
+;;                                           NUM / FUNC swapped for the laptop)
 ;;      R-Cmd/rmet  tap Enter   hold SYM    (ZMK SYM tapped Delete; Enter's
 ;;                                           ZMK thumb held the dropped MISC)
 ;;      L-Opt/lalt  stays a plain Left Option.
 ;;
-;;  Q and P are moved off the top row so the physical q / p keys are never
-;;  used, matching the ZMK layout where Q / P sit on the home-row corners:
+;;  ZMK has Q / P on the home-row corners; here they stay on the top row, so
+;;  the ZMK position-12 / position-23 values ride on the physical q / p keys:
 ;;
-;;      CapsLock -> Q  (+ ZMK position-12 value on every layer)
-;;      '        -> P  (+ ZMK position-23 value on every layer)
-;;      physical q / p -> XX (dead)
+;;      physical q -> [ / { / F12 on NUM / SYM / FUNC, dead on NAV
+;;      physical p -> undo on NAV, dead elsewhere
+;;      CapsLock / ' -> plain CapsLock / ' on every layer, except CapsLock = 0
+;;                      on NUM (Space is the NUM hold key)
 ;;
 ;;  Divergences from the ZMK keymap (deliberate, for a laptop):
 ;;    * MOU (mouse) and MISC (bluetooth/media) layers dropped.
 ;;    * ZMK's Esc thumb was `&lt 5(MOU) ESC`; MOU is gone so the real Esc key
 ;;      is left alone. ZMK's Enter thumb was MISC; Enter now carries SYM.
-;;    * NAV edit cluster (K_COPY / K_PASTE / K_CUT / K_UNDO / K_REDO) uses macOS
-;;      Cmd shortcuts. On Linux/Windows swap `M-` for `C-`.
+;;    * NAV edit cluster (K_COPY / K_PASTE / K_CUT / K_UNDO / K_REDO) uses
+;;      Cmd shortcuts on macOS and Ctrl shortcuts on Linux (see `platform`).
 ;;    * ZMK T on FUNC = PRINTSCREEN -> macOS full-screen screenshot `M-S-3`
-;;      (kanata on macOS has no print-screen keycode).
+;;      (kanata on macOS has no print-screen keycode); real PrtSc on Linux.
 ;;    * Combos are global (fire on every layer) exactly like the ZMK combos.
 ;; =============================================================================
 
 (defcfg
   process-unmapped-keys yes
   concurrent-tap-hold yes
+  ;; Linux only (ignored on macOS): grab just the MacBook's built-in keyboard
+  ;; so an attached Corne keeps its own ZMK layout.
+  linux-dev /dev/input/by-id/usb-Apple_Inc._Apple_Internal_Keyboard___Trackpad-event-kbd
 )
 
 (defsrc
@@ -79,11 +84,23 @@
   l  (tap-hold $tap-time $hold-time l ralt)
   ;  (tap-hold $tap-time $hold-time ; rmet)
   ;; -- layer keys on the bottom-row mods + space -----------------------
-  spc (tap-hold $tap-time $hold-time spc  (layer-while-held functionk))
+  spc (tap-hold $tap-time $hold-time spc  (layer-while-held numbers))
   esc (tap-hold $tap-time $hold-time esc  (layer-while-held nav))       ;; left cmd
-  bks (tap-hold $tap-time $hold-time bspc (layer-while-held numbers))   ;; right opt
+  bks (tap-hold $tap-time $hold-time bspc (layer-while-held functionk)) ;; right opt
   ent (tap-hold $tap-time $hold-time ret  (layer-while-held symbols))   ;; right cmd
 )                                                                       ;; left opt stays plain
+
+;; OS-specific shortcuts used on the FUNC / NAV layers.
+(platform (macos)
+  (defalias
+    prt M-S-3  cpy M-c  pst M-v  cut M-x  und M-z  rdo M-S-z
+  )
+)
+(platform (linux)
+  (defalias
+    prt prnt   cpy C-c  pst C-v  cut C-x  und C-z  rdo C-S-z
+  )
+)
 
 ;; ZMK combos (key-positions translated to the equivalent letters).
 ;; timeout 40 ms, active on every layer -- same as the ZMK combos.
@@ -95,11 +112,11 @@
 )
 
 ;; -----------------------------------------------------------------------------
-;; caps = Q, ' = P, physical q/p dead.
+;; home-row mods + thumb layer keys; everything else types normally.
 (deflayer base
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    XX   _    _    _    _    _    _    _    _    XX   _    _    _
-  q    @a   @s   @d   @f   @g   @h   @j   @k   @l   @;   p    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    @a   @s   @d   @f   @g   @h   @j   @k   @l   @;   _    _
   _    _    _    _    _    _    _    _    _    _    _    _
   _    _    @esc      @spc      @ent @bks
 )
@@ -107,35 +124,35 @@
 ;; ZMK num_layer
 (deflayer numbers
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    XX   7    8    9    ]    _    _    _    _    XX   _    _    _
-  [    '    4    5    6    =    _    rsft rctl ralt rmet _    _
+  _    [    7    8    9    ]    _    _    _    _    XX   _    _    _
+  0    '    4    5    6    =    _    rsft rctl ralt rmet _    _
   _    grv  1    2    3    bksl _    _    _    _    _    _
-  _    _    -         0         _    _
+  _    _    -         _         _    _
 )
 
 ;; ZMK sym_layer
 (deflayer symbols
   _    _      _     _     _     _      _    _    _    _    _    _    _    _
-  _    XX     S-7   S-8   S-9   S-]    _    _    _    _    XX   _    _    _
-  S-[  S-'    S-4   S-5   S-6   S-=    _    rsft rctl ralt rmet _    _
+  _    S-[    S-7   S-8   S-9   S-]    _    _    _    _    XX   _    _    _
+  _    S-'    S-4   S-5   S-6   S-=    _    rsft rctl ralt rmet _    _
   _    S-grv  S-1   S-2   S-3   S-bksl _    _    _    _    _    _
   _    _      S--        S-0        _    _
 )
 
-;; ZMK func_layer  (ZMK T = PRINTSCREEN -> macOS full-screen screenshot M-S-3)
+;; ZMK func_layer  (ZMK T = PRINTSCREEN, see @prt)
 (deflayer functionk
   _    _    _    _    _    _     _    _    _    _    _    _    _    _
-  _    XX   F7   F8   F9   M-S-3 _    _    _    _    XX   _    _    _
-  F12  F11  F4   F5   F6   slck  _    rsft rctl ralt rmet _    _
+  _    F12  F7   F8   F9   @prt  _    _    _    _    XX   _    _    _
+  _    F11  F4   F5   F6   slck  _    rsft rctl ralt rmet _    _
   _    F10  F1   F2   F3   pause _    _    _    _    _    _
   _    _    _         _         _    _
 )
 
-;; ZMK nav_layer  (edit cluster = macOS Cmd shortcuts)
+;; ZMK nav_layer  (edit cluster, see @cpy etc.)
 (deflayer nav
   _    _    _    _    _    _    _     _     _     _     _     _    _    _
-  _    XX   _    _    _    _    M-S-z M-v   M-c   M-x   XX    _    _    _
-  _    lmet lalt lctl lsft _    left  down  up    right caps  M-z  _
+  _    XX   _    _    _    _    @rdo  @pst  @cpy  @cut  @und  _    _    _
+  _    lmet lalt lctl lsft _    left  down  up    right caps  _    _
   _    _    _    _    _    _    home  pgdn  pgup  end   ins   _
   _    _    _         tab       _    del
 )

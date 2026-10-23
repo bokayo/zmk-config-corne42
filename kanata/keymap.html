@@ -76,6 +76,17 @@
   }
   .theme:hover{color:var(--accent);border-color:var(--accent)}
 
+  .ctrls{flex:none;display:flex;align-items:center;gap:8px}
+  .os{display:flex;gap:2px;background:var(--surface-2);padding:3px;border-radius:9px}
+  .os button{
+    appearance:none;border:0;background:transparent;color:var(--ink-soft);cursor:pointer;
+    font:600 .74rem "IBM Plex Mono",monospace;height:32px;padding:0 10px;border-radius:6px;
+    transition:background .15s,color .15s;
+  }
+  .os button:hover{color:var(--ink)}
+  .os button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .os button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
   /* ---- layer tabs ---- */
   .tabs{
     display:flex;flex-wrap:wrap;gap:6px;background:var(--surface-2);
@@ -258,7 +269,13 @@
       <h1>Corne42 Keymap</h1>
       <p class="sub">Five kanata layers, ported from the ZMK Corne config to a standard keyboard. Source: <code>kanata/kanata.kbd</code></p>
     </div>
-    <button class="theme" id="theme" aria-label="Toggle light / dark">◐</button>
+    <div class="ctrls">
+      <div class="os" role="group" aria-label="Operating system">
+        <button type="button" data-os="macos" aria-pressed="false">macOS</button>
+        <button type="button" data-os="linux" aria-pressed="false">Linux</button>
+      </div>
+      <button class="theme" id="theme" aria-label="Toggle light / dark">◐</button>
+    </div>
   </header>
 
   <div class="tabs" role="tablist" aria-label="Keymap layers" id="tabs"></div>
@@ -275,9 +292,9 @@
         <li><span class="sw mod"></span><span><b>Home-row mod</b> — tap the letter, hold for a modifier</span></li>
         <li><span class="sw layer"></span><span><b>Layer key</b> — tap sends a key, hold shifts layer</span></li>
         <li><span class="sw active"></span><span><b>Held now</b> — the key you hold to reach this layer</span></li>
-        <li><span class="sw arrow"></span><span><b>Arrows / edit</b> — navigation &amp; ⌘ clipboard</span></li>
+        <li><span class="sw arrow"></span><span><b>Arrows / edit</b> — navigation &amp; <span id="legend-edit">⌘</span> clipboard</span></li>
         <li><span class="sw ghost"></span><span><b>Transparent</b> — falls through to the base layer</span></li>
-        <li><span class="sw dead"></span><span><b>Dead</b> — physical <b>q</b> / <b>p</b> are disabled on purpose</span></li>
+        <li><span class="sw dead"></span><span><b>Dead</b> — nothing on this layer</span></li>
       </ul>
     </section>
 
@@ -295,7 +312,7 @@
   </section>
 
   <footer>
-    <span>tap / hold 170 ms</span><span>quick-tap 100 ms</span><span>MOU + MISC layers omitted</span><span>edit keys = macOS ⌘</span>
+    <span>tap / hold 170 ms</span><span>quick-tap 100 ms</span><span>MOU + MISC layers omitted</span><span id="foot-edit">edit keys = macOS ⌘</span>
   </footer>
 </div>
 
@@ -327,45 +344,47 @@
 
   const LAYERS = {
     base:{ name:"Base", gloss:"letters", reach:["Default layer — home-row mods & combos live here","base"], ov:Object.assign({},baseMods,{
-      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
-      caps:{t:"Q",role:"reloc"}, quot:{t:"P",role:"reloc"},
-      lmet:{t:"Esc",f:"nav",role:"layer"}, spc:{t:"Space",f:"func",role:"layer"},
-      ralt:{t:"Bspc",f:"num",role:"layer"}, rmet:{t:"Enter",f:"sym",role:"layer"}
+      lmet:{t:"Esc",f:"nav",role:"layer"}, spc:{t:"Space",f:"num",role:"layer"},
+      ralt:{t:"Bspc",f:"func",role:"layer"}, rmet:{t:"Enter",f:"sym",role:"layer"}
     })},
-    numbers:{ name:"Num", gloss:"digits", activator:"ralt", reach:["Hold Right ⌥  (taps as Bspc)","num"], ov:Object.assign({},rMods,{
-      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+    numbers:{ name:"Num", gloss:"digits", activator:"spc", reach:["Hold Space","num"], ov:Object.assign({},rMods,{
+      q:{t:"[",role:"sym"}, p:{t:"—",role:"dead"},
       w:{t:"7",role:"num"}, e:{t:"8",role:"num"}, r:{t:"9",role:"num"}, t:{t:"]",role:"sym"},
-      caps:{t:"[",role:"sym"},
+      caps:{t:"0",role:"num"},
       a:{t:"'",role:"sym"}, s:{t:"4",role:"num"}, d:{t:"5",role:"num"}, f:{t:"6",role:"num"}, g:{t:"=",role:"sym"},
       z:{t:"`",role:"sym"}, x:{t:"1",role:"num"}, c:{t:"2",role:"num"}, v:{t:"3",role:"num"}, b:{t:"\\",role:"sym"},
-      lmet:{t:"−",role:"sym"}, spc:{t:"0",role:"num"}
+      lmet:{t:"−",role:"sym"}
     })},
     symbols:{ name:"Sym", gloss:"shifted", activator:"rmet", reach:["Hold Right ⌘  (taps as Enter)","sym"], ov:Object.assign({},rMods,{
-      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+      q:{t:"{",role:"sym"}, p:{t:"—",role:"dead"},
       w:{t:"&",role:"sym"}, e:{t:"*",role:"sym"}, r:{t:"(",role:"sym"}, t:{t:"}",role:"sym"},
-      caps:{t:"{",role:"sym"},
       a:{t:'"',role:"sym"}, s:{t:"$",role:"sym"}, d:{t:"%",role:"sym"}, f:{t:"^",role:"sym"}, g:{t:"+",role:"sym"},
       z:{t:"~",role:"sym"}, x:{t:"!",role:"sym"}, c:{t:"@",role:"sym"}, v:{t:"#",role:"sym"}, b:{t:"|",role:"sym"},
       lmet:{t:"_",role:"sym"}, spc:{t:")",role:"sym"}
     })},
-    functionk:{ name:"Fn", gloss:"F-keys", activator:"spc", reach:["Hold Space","func"], ov:Object.assign({},rMods,{
-      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+    functionk:{ name:"Fn", gloss:"F-keys", activator:"ralt", reach:["Hold Right ⌥  (taps as Bspc)","func"], ov:Object.assign({},rMods,{
+      q:{t:"F12"}, p:{t:"—",role:"dead"},
       w:{t:"F7"}, e:{t:"F8"}, r:{t:"F9"}, t:{t:"⇧⌘3",f:"shot",role:"edit"},
-      caps:{t:"F12"},
       a:{t:"F11"}, s:{t:"F4"}, d:{t:"F5"}, f:{t:"F6"}, g:{t:"ScrLk"},
       z:{t:"F10"}, x:{t:"F1"}, c:{t:"F2"}, v:{t:"F3"}, b:{t:"Pause"}
     })},
     nav:{ name:"Nav", gloss:"move · edit", activator:"lmet", reach:["Hold Left ⌘  (taps as Esc)","nav"], ov:{
-      q:{t:"—",role:"dead"}, p:{t:"—",role:"dead"},
+      q:{t:"—",role:"dead"},
       a:{t:"⌘",f:"L GUI",role:"pmod"}, s:{t:"⌥",f:"L ALT",role:"pmod"}, d:{t:"⌃",f:"L CTL",role:"pmod"}, f:{t:"⇧",f:"L SFT",role:"pmod"},
       spc:{t:"Tab",note:"Space bar → Tab while NAV is held"},
       ralt:{t:"Del"},
       y:{t:"⇧⌘Z",f:"redo",role:"edit"}, u:{t:"⌘V",f:"paste",role:"edit"}, i:{t:"⌘C",f:"copy",role:"edit"}, o:{t:"⌘X",f:"cut",role:"edit"},
       h:{t:"←",role:"arrow"}, j:{t:"↓",role:"arrow"}, k:{t:"↑",role:"arrow"}, l:{t:"→",role:"arrow"},
       scln:{t:"⇪",f:"caps lk"},
-      quot:{t:"⌘Z",f:"undo",role:"edit"},
+      p:{t:"⌘Z",f:"undo",role:"edit"},
       n:{t:"Home"}, m:{t:"PgDn"}, comm:{t:"PgUp"}, dot:{t:"End"}, slsh:{t:"Ins"}
     }}
+  };
+
+  // OS-specific keys, mirroring the `platform` aliases in kanata.kbd
+  const EDIT = {
+    macos:{name:"macOS", key:"⌘", t:"⇧⌘3", y:"⇧⌘Z", u:"⌘V", i:"⌘C", o:"⌘X", p:"⌘Z"},
+    linux:{name:"Linux", key:"⌃", t:"PrtSc", y:"⌃⇧Z", u:"⌃V", i:"⌃C", o:"⌃X", p:"⌃Z"}
   };
 
   const COMBOS = [
@@ -513,7 +532,7 @@
   }
 
   function buildTip(code,ov,L,def){
-    if(code==="fn") return "fn — macOS reserves this key; kanata can't remap it";
+    if(code==="fn") return "fn — handled by the keyboard itself; kanata can't remap it";
     if(code==="larr"||code==="rarr") return "Arrow key — not mapped, always active";
     if(L.activator===code) return "Hold to stay in the "+L.name+" layer";
     if(ov && ov.note) return ov.note;
@@ -523,8 +542,8 @@
       if(L===LAYERS.base) return bv+" — types normally";
       return "Transparent → base layer ("+bv+")";
     }
-    if(ov.role==="dead") return "Disabled — press CapsLock for Q, ' for P";
-    if(ov.role==="reloc") return ov.t+" — relocated here; the top-row "+ov.t.toLowerCase()+" key is dead";
+    if(ov.role==="dead") return "Disabled on this layer";
+    if(ov.role==="reloc") return ov.t+" — duplicated here from the top-row "+ov.t.toLowerCase()+" key";
     if(ov.role==="mod"){
       const nm = ov.f==="✦ HYPER" ? "Hyper (⌘⌥⌃⇧)" : ov.f;
       return "tap "+ov.t+"  ·  hold "+nm;
@@ -595,6 +614,28 @@
   // initial layer from hash
   const h = location.hash.replace("#","");
   if(LAYERS[h]) current = h;
-  render();
+
+  // OS toggle
+  const osBtns = [...document.querySelectorAll(".os button")];
+  let os = /Mac/i.test(navigator.platform||"") ? "macos" : "linux";
+  try{
+    const saved = localStorage.getItem("keymap-os");
+    if(EDIT[saved]) os = saved;
+  }catch(_){}
+  function setOS(next){
+    os = next;
+    const E = EDIT[os];
+    LAYERS.functionk.ov.t.t = E.t;
+    ["y","u","i","o","p"].forEach(c=>{ LAYERS.nav.ov[c].t = E[c]; });
+    document.getElementById("legend-edit").textContent = E.key;
+    document.getElementById("foot-edit").textContent = "edit keys = "+E.name+" "+E.key;
+    osBtns.forEach(b=>b.setAttribute("aria-pressed", b.dataset.os===os ? "true" : "false"));
+    render();
+  }
+  osBtns.forEach(b=>b.addEventListener("click",()=>{
+    setOS(b.dataset.os);
+    try{ localStorage.setItem("keymap-os",os); }catch(_){}
+  }));
+  setOS(os);
 })();
 </script>
